@@ -1,0 +1,1331 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NextBuy — Workflow & Todo List</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080C14;
+    --surface: #0D1421;
+    --surface2: #111827;
+    --border: #1E2D45;
+    --blue: #2D7BF5;
+    --blue-dim: #1A4A9E;
+    --cyan: #00D4FF;
+    --green: #00E5A0;
+    --orange: #FF8C42;
+    --red: #FF4D6D;
+    --purple: #A855F7;
+    --yellow: #FFD166;
+    --text: #E8EDF5;
+    --text-dim: #6B7A99;
+    --text-mid: #A0AABE;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(45,123,245,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(45,123,245,0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 60px 40px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Header */
+  .header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 80px;
+  }
+
+  .logo {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--blue);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  h1 {
+    font-size: clamp(42px, 6vw, 72px);
+    font-weight: 800;
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+  }
+
+  h1 .word1 { color: var(--text); }
+  h1 .word2 { color: var(--blue); }
+
+  .subtitle {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-top: 16px;
+    letter-spacing: 0.1em;
+  }
+
+  .badge {
+    background: rgba(45,123,245,0.1);
+    border: 1px solid rgba(45,123,245,0.3);
+    color: var(--blue);
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    padding: 6px 12px;
+    border-radius: 4px;
+    letter-spacing: 0.1em;
+  }
+
+  /* Section titles */
+  .section-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    margin-bottom: 32px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ═══ WORKFLOW SCHEMA ═══ */
+  .workflow {
+    margin-bottom: 100px;
+  }
+
+  .flow-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  /* Flow row */
+  .flow-row {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    position: relative;
+  }
+
+  /* Connector vertical */
+  .flow-connector-v {
+    display: flex;
+    justify-content: center;
+    padding: 8px 0;
+    position: relative;
+  }
+
+  .flow-connector-v::before {
+    content: '';
+    width: 2px;
+    height: 100%;
+    background: linear-gradient(to bottom, var(--border), var(--border));
+    position: absolute;
+    left: 50%;
+  }
+
+  .arrow-down {
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-top: 10px solid var(--border);
+    position: relative;
+    z-index: 1;
+    margin-top: auto;
+  }
+
+  /* Data node */
+  .data-node {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px 28px;
+    flex: 1;
+    position: relative;
+    transition: border-color 0.2s;
+  }
+
+  .data-node:hover { border-color: var(--blue-dim); }
+
+  .node-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .node-title {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .node-sub {
+    font-size: 12px;
+    color: var(--text-dim);
+    font-family: 'Space Mono', monospace;
+  }
+
+  /* Stage blocks */
+  .stage {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 2px;
+    margin-bottom: 2px;
+    position: relative;
+  }
+
+  .stage-label {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 28px 20px;
+    border-radius: 12px 0 0 12px;
+    text-align: center;
+    position: relative;
+  }
+
+  .stage-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1;
+    opacity: 0.4;
+  }
+
+  .stage-name {
+    font-size: 13px;
+    font-weight: 700;
+    margin-top: 6px;
+    letter-spacing: 0.05em;
+  }
+
+  .stage-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    margin-top: 4px;
+    opacity: 0.6;
+  }
+
+  .stage-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2px;
+    border-radius: 0 12px 12px 0;
+    overflow: hidden;
+  }
+
+  .stage-block {
+    background: var(--surface2);
+    padding: 20px;
+    border-left: 3px solid transparent;
+    position: relative;
+  }
+
+  .block-icon {
+    font-size: 20px;
+    margin-bottom: 10px;
+  }
+
+  .block-name {
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  .block-detail {
+    font-size: 11px;
+    color: var(--text-dim);
+    font-family: 'Space Mono', monospace;
+    line-height: 1.6;
+  }
+
+  .block-tech {
+    display: inline-block;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    padding: 2px 6px;
+    border-radius: 3px;
+    margin-top: 8px;
+    color: var(--text-mid);
+  }
+
+  /* Arrow between stages */
+  .stage-arrow {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 40px;
+    position: relative;
+    margin-bottom: 2px;
+  }
+
+  .stage-arrow::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--border);
+  }
+
+  .arrow-icon {
+    background: var(--bg);
+    border: 2px solid var(--border);
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Output box */
+  .output-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .output-icon {
+    font-size: 24px;
+    flex-shrink: 0;
+  }
+
+  .output-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    color: var(--text-dim);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .output-value {
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  /* Color schemes per stage */
+  .s-etl .stage-label { background: rgba(0, 213, 255, 0.06); color: var(--cyan); border: 1px solid rgba(0,213,255,0.15); }
+  .s-etl .stage-block { border-left-color: var(--cyan); }
+  .s-etl .block-name { color: var(--cyan); }
+
+  .s-eda .stage-label { background: rgba(0, 229, 160, 0.06); color: var(--green); border: 1px solid rgba(0,229,160,0.15); }
+  .s-eda .stage-block { border-left-color: var(--green); }
+  .s-eda .block-name { color: var(--green); }
+
+  .s-base .stage-label { background: rgba(255, 209, 102, 0.06); color: var(--yellow); border: 1px solid rgba(255,209,102,0.15); }
+  .s-base .stage-block { border-left-color: var(--yellow); }
+  .s-base .block-name { color: var(--yellow); }
+
+  .s-stage1 .stage-label { background: rgba(168, 85, 247, 0.08); color: var(--purple); border: 1px solid rgba(168,85,247,0.2); }
+  .s-stage1 .stage-block { border-left-color: var(--purple); }
+  .s-stage1 .block-name { color: var(--purple); }
+
+  .s-stage2 .stage-label { background: rgba(45, 123, 245, 0.08); color: var(--blue); border: 1px solid rgba(45,123,245,0.2); }
+  .s-stage2 .stage-block { border-left-color: var(--blue); }
+  .s-stage2 .block-name { color: var(--blue); }
+
+  .s-eval .stage-label { background: rgba(255, 77, 109, 0.06); color: var(--red); border: 1px solid rgba(255,77,109,0.15); }
+  .s-eval .stage-block { border-left-color: var(--red); }
+  .s-eval .block-name { color: var(--red); }
+
+  .s-product .stage-label { background: rgba(255, 140, 66, 0.06); color: var(--orange); border: 1px solid rgba(255,140,66,0.15); }
+  .s-product .stage-block { border-left-color: var(--orange); }
+  .s-product .block-name { color: var(--orange); }
+
+  /* ═══ TODO LIST ═══ */
+  .todo-section {
+    margin-top: 100px;
+  }
+
+  .todo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+    gap: 20px;
+  }
+
+  .todo-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    transition: transform 0.2s, border-color 0.2s;
+  }
+
+  .todo-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(255,255,255,0.1);
+  }
+
+  .todo-header {
+    padding: 20px 24px 16px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .todo-stage-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .todo-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .todo-stage-name {
+    font-size: 15px;
+    font-weight: 700;
+  }
+
+  .todo-day-badge {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    color: var(--text-dim);
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+  }
+
+  .todo-body {
+    padding: 16px 24px 20px;
+  }
+
+  .todo-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+
+  .todo-item:last-child { border-bottom: none; }
+  .todo-item:hover { opacity: 0.85; }
+
+  .checkbox {
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    border: 1.5px solid var(--border);
+    flex-shrink: 0;
+    margin-top: 1px;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+  }
+
+  .todo-item.done .checkbox {
+    background: var(--green);
+    border-color: var(--green);
+    color: #000;
+  }
+
+  .todo-item.done .todo-text {
+    text-decoration: line-through;
+    color: var(--text-dim);
+  }
+
+  .todo-text {
+    font-size: 13px;
+    color: var(--text-mid);
+    line-height: 1.5;
+    flex: 1;
+  }
+
+  .todo-text strong {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  .priority {
+    font-family: 'Space Mono', monospace;
+    font-size: 8px;
+    padding: 2px 5px;
+    border-radius: 3px;
+    flex-shrink: 0;
+    margin-top: 2px;
+    letter-spacing: 0.1em;
+  }
+
+  .p-critical { background: rgba(255,77,109,0.15); color: var(--red); border: 1px solid rgba(255,77,109,0.3); }
+  .p-high { background: rgba(255,140,66,0.15); color: var(--orange); border: 1px solid rgba(255,140,66,0.3); }
+  .p-med { background: rgba(255,209,102,0.15); color: var(--yellow); border: 1px solid rgba(255,209,102,0.3); }
+  .p-bonus { background: rgba(168,85,247,0.1); color: var(--purple); border: 1px solid rgba(168,85,247,0.3); }
+
+  .todo-progress {
+    margin-top: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .progress-bar {
+    flex: 1;
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.3s;
+  }
+
+  .progress-text {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+    white-space: nowrap;
+  }
+
+  /* Legend */
+  .legend {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 40px;
+    padding: 20px 24px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+  }
+
+  /* Glow effects */
+  .glow-cyan { box-shadow: 0 0 30px rgba(0,213,255,0.06); }
+  .glow-purple { box-shadow: 0 0 30px rgba(168,85,247,0.08); }
+  .glow-blue { box-shadow: 0 0 30px rgba(45,123,245,0.08); }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .stage { grid-template-columns: 1fr; }
+    .stage-label { border-radius: 12px 12px 0 0; }
+    .stage-content { border-radius: 0 0 12px 12px; }
+    .todo-grid { grid-template-columns: 1fr; }
+    .header { flex-direction: column; gap: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div>
+      <div class="logo">{ EPITECH } — NextBuy</div>
+      <h1><span class="word1">WORKFLOW</span><br><span class="word2">& TODO LIST</span></h1>
+      <div class="subtitle">// Système 2 étages — 10 jours — équipe ×3</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end">
+      <div class="badge">v2.0 — FINAL</div>
+      <div class="badge" style="color:var(--green);border-color:rgba(0,229,160,0.3);background:rgba(0,229,160,0.05)">GRU → LightGBM</div>
+      <div class="badge" style="color:var(--purple);border-color:rgba(168,85,247,0.3);background:rgba(168,85,247,0.05)">Ablation Study</div>
+    </div>
+  </div>
+
+  <!-- WORKFLOW SCHEMA -->
+  <div class="workflow">
+    <div class="section-title">01 — Pipeline Architecture</div>
+
+    <div class="flow-container">
+
+      <!-- ETL -->
+      <div class="stage s-etl glow-cyan">
+        <div class="stage-label">
+          <div class="stage-num">01</div>
+          <div class="stage-name">ETL</div>
+          <div class="stage-tag">JOURS 1–2</div>
+        </div>
+        <div class="stage-content">
+          <div class="stage-block">
+            <div class="block-icon">🗃️</div>
+            <div class="block-name">Merge Tables</div>
+            <div class="block-detail">orders + order_products<br>+ products + aisles<br>+ departments</div>
+            <div class="block-tech">pandas</div>
+          </div>
+          <div class="stage-block">
+            <div class="block-icon">🧹</div>
+            <div class="block-name">Cleaning</div>
+            <div class="block-detail">NaN, doublons<br>types, cohérence<br>order_number</div>
+            <div class="block-tech">pandas + numpy</div>
+          </div>
+          <div class="stage-block">
+            <div class="block-icon">✂️</div>
+            <div class="block-name">Split Temporel</div>
+            <div class="block-detail">train = n-2<br>val = n-1<br>test = dernière</div>
+            <div class="block-tech">⚠️ JAMAIS aléatoire</div>
+          </div>
+          <div class="stage-block">
+            <div class="block-icon">🏪</div>
+            <div class="block-name">Feature Store</div>
+            <div class="block-detail">events / user_features<br>product_features<br>200+ features</div>
+            <div class="block-tech">parquet / pickle</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="stage-arrow"><div class="arrow-icon">↓</div></div>
+
+      <!-- EDA -->
+      <div class="stage s-eda">
+        <div class="stage-label">
+          <div class="stage-num">02</div>
+          <div class="stage-name">EDA</div>
+          <div class="stage-tag">JOURS 3–4</div>
+        </div>
+        <div class="stage-content">
+          <div class="stage-block">
+            <div class="block-icon">⏰</div>
+            <div class="block-name">Temporel</div>
+            <div class="block-detail">Heures/jours commandes<br>days_since_prior<br>patterns hebdo</div>
+            <div class="block-tech">heatmap, line chart</div>
+          </div>
+          <div class="stage-block">
+            <div class="block-icon">🛒</div>
+            <div class="block-name">Produits</div>
+            <div class="block-detail">Bestsellers, reorder rate<br>bio ratio, first-in-cart<br>aisles/depts</div>
+            <div class="block-tech">treemap, violin</div>
+          </div>
+          <div class="stage-block">
+            <div class="block-icon">🕸️</div>
+            <div class="block-name">Co-purchase</div>
+            <div class="block-detail">Règles association<br>graphe produit-produit<br>fréquence co-achat</div>
+            <div class="block-tech">mlxtend + networkx</div>
+          </div>
+          <div class="stage-block">
+            <div class="block-icon">👥</div>
+            <div class="block-name">Segmentation</div>
+            <div class="block-detail">KMeans / DBSCAN<br>profils nommés<br>UMAP 2D</div>
+            <div class="block-tech">sklearn + umap</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="stage-arrow"><div class="arrow-icon">↓</div></div>
+
+      <!-- BASELINES -->
+      <div class="stage s-base">
+        <div class="stage-label">
+          <div class="stage-num">03</div>
+          <div class="stage-name">BASELINES</div>
+          <div class="stage-tag">JOURS 5–6</div>
+        </div>
+        <div class="stage-content">
+          <div class="stage-block">
+            <div class="block-icon">📊</div>
+            <div class="block-name">Reco Baselines</div>
+            <div class="block-detail">Popular items<br>User frequent items<br>Co-occurrence</div>
+            <div class="block-tech">Recall@K / NDCG@K</div>
+          </div>
+          <div class="stage-block">
+            <div class="block-icon">📈</div>
+            <div class="block-name">ML Baselines</div>
+            <div class="block-detail">Logistic Regression<br>LightGBM simple<br>sans feature eng.</div>
+            <div class="block-tech">PR-AUC / AUC</div>
+          </div>
+          <div class="stage-block">
+            <div class="block-icon">⏳</div>
+            <div class="block-name">Survival Analysis</div>
+            <div class="block-detail">Time-to-next-order<br>Kaplan-Meier curves<br>par segment client</div>
+            <div class="block-tech">lifelines</div>
+          </div>
+          <div class="stage-block">
+            <div class="block-icon">🎯</div>
+            <div class="block-name">Feature Eng.</div>
+            <div class="block-detail">user × product<br>interaction features<br>encodage cyclique</div>
+            <div class="block-tech">200+ features</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="stage-arrow"><div class="arrow-icon">↓</div></div>
+
+      <!-- STAGE 1 GRU -->
+      <div class="stage s-stage1 glow-purple">
+        <div class="stage-label">
+          <div class="stage-num">04</div>
+          <div class="stage-name">STAGE 1</div>
+          <div class="stage-tag">JOURS 7–8</div>
+        </div>
+        <div class="stage-content">
+          <div class="stage-block">
+            <div class="block-icon">🧬</div>
+            <div class="block-name">Embeddings</div>
+            <div class="block-detail">Product embedding<br>trainable (dim=128)<br>padding_idx=0</div>
+            <div class="block-tech">nn.Embedding</div>
+          </div>
+          <div class="stage-block">
+            <div class="block-icon">🔄</div>
+            <div class="block-name">GRU Séquentiel</div>
+            <div class="block-detail">Historique → hidden<br>hidden_size=256<br>batch_first=True</div>
+            <div class="block-tech">nn.GRU (PyTorch)</div>
+          </div>
+          <div class="stage-block">
+            <div class="block-icon">🎲</div>
+            <div class="block-name">InfoNCE Loss</div>
+            <div class="block-detail">In-batch negatives<br>dot(user_emb, item_emb)<br>sampled softmax</div>
+            <div class="block-tech">negative sampling</div>
+          </div>
+          <div class="stage-block">
+            <div class="block-icon">🏆</div>
+            <div class="block-name">Output : Top-K</div>
+            <div class="block-detail">K=100 candidats/user<br>Recall@20/50<br>NDCG@20, HitRate@K</div>
+            <div class="block-tech">score_stage1 →</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="stage-arrow"><div class="arrow-icon">↓</div></div>
+
+      <!-- STAGE 2 LIGHTGBM -->
+      <div class="stage s-stage2 glow-blue">
+        <div class="stage-label">
+          <div class="stage-num">05</div>
+          <div class="stage-name">STAGE 2</div>
+          <div class="stage-tag">JOUR 9</div>
+        </div>
+        <div class="stage-content">
+          <div class="stage-block">
+            <div class="block-icon">🌿</div>
+            <div class="block-name">LightGBM Pro</div>
+            <div class="block-detail">Input : Top-100 GRU<br>200+ features<br>+ score_stage1</div>
+            <div class="block-tech">lightgbm</div>
+          </div>
+          <div class="stage-block">
+            <div class="block-icon">⚙️</div>
+            <div class="block-name">Optuna Tuning</div>
+            <div class="block-detail">Bayesian search<br>learning_rate, depth<br>num_leaves, reg</div>
+            <div class="block-tech">optuna</div>
+          </div>
+          <div class="stage-block">
+            <div class="block-icon">🔬</div>
+            <div class="block-name">SHAP</div>
+            <div class="block-detail">Beeswarm plot<br>Waterfall par user<br>Feature importance</div>
+            <div class="block-tech">shap</div>
+          </div>
+          <div class="stage-block">
+            <div class="block-icon">📋</div>
+            <div class="block-name">Ranking Final</div>
+            <div class="block-detail">Proba reorder<br>PR-AUC, AUC<br>Precision@K, MRR@K</div>
+            <div class="block-tech">sklearn metrics</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="stage-arrow"><div class="arrow-icon">↓</div></div>
+
+      <!-- EVAL -->
+      <div class="stage s-eval">
+        <div class="stage-label">
+          <div class="stage-num">06</div>
+          <div class="stage-name">ABLATION</div>
+          <div class="stage-tag">JOUR 9</div>
+        </div>
+        <div class="stage-content">
+          <div class="stage-block">
+            <div class="block-icon">🧪</div>
+            <div class="block-name">Sans GRU</div>
+            <div class="block-detail">Remplacer GRU par<br>moyenne d'embeddings<br>→ mesurer Δ</div>
+            <div class="block-tech">avg pooling</div>
+          </div>
+          <div class="stage-block">
+            <div class="block-icon">⏱️</div>
+            <div class="block-name">Sans Time Features</div>
+            <div class="block-detail">Retirer dow/hour<br>days_since_prior<br>→ mesurer Δ</div>
+            <div class="block-tech">feature masking</div>
+          </div>
+          <div class="stage-block">
+            <div class="block-icon">🎯</div>
+            <div class="block-name">K Candidats</div>
+            <div class="block-detail">K=50 vs 100 vs 200<br>impact recall/précision<br>trade-off latence</div>
+            <div class="block-tech">K ablation</div>
+          </div>
+          <div class="stage-block">
+            <div class="block-icon">📊</div>
+            <div class="block-name">Tableau Comparatif</div>
+            <div class="block-detail">Toutes configs<br>vs modèle complet<br>grouped bar chart</div>
+            <div class="block-tech">matplotlib</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="stage-arrow"><div class="arrow-icon">↓</div></div>
+
+      <!-- PRODUCT -->
+      <div class="stage s-product">
+        <div class="stage-label">
+          <div class="stage-num">07</div>
+          <div class="stage-name">PRODUCT</div>
+          <div class="stage-tag">JOUR 10</div>
+        </div>
+        <div class="stage-content">
+          <div class="stage-block">
+            <div class="block-icon">📡</div>
+            <div class="block-name">Streamlit</div>
+            <div class="block-detail">EDA interactive<br>Reco par user_id<br>comparaison modèles</div>
+            <div class="block-tech">streamlit</div>
+          </div>
+          <div class="stage-block">
+            <div class="block-icon">🗺️</div>
+            <div class="block-name">Embeddings UMAP</div>
+            <div class="block-detail">Produits colorés<br>par aisle/department<br>nearest neighbors</div>
+            <div class="block-tech">umap + plotly</div>
+          </div>
+          <div class="stage-block">
+            <div class="block-icon">✅</div>
+            <div class="block-name">Reproductibilité</div>
+            <div class="block-detail">requirements.txt<br>seeds fixés partout<br>test machine tierce</div>
+            <div class="block-tech">⚠️ CRITIQUE</div>
+          </div>
+          <div class="stage-block">
+            <div class="block-icon">🎤</div>
+            <div class="block-name">Soutenance</div>
+            <div class="block-detail">Cold-start strategy<br>10 questions répondues<br>arguments prêts</div>
+            <div class="block-tech">storytelling</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- TODO LIST -->
+  <div class="todo-section">
+    <div class="section-title">02 — Todo List par Étage</div>
+
+    <div class="todo-grid">
+
+      <!-- ETL -->
+      <div class="todo-card">
+        <div class="todo-header">
+          <div class="todo-stage-info">
+            <div class="todo-dot" style="background:var(--cyan)"></div>
+            <div class="todo-stage-name" style="color:var(--cyan)">01 — ETL & Data Build</div>
+          </div>
+          <div class="todo-day-badge">J1–J2</div>
+        </div>
+        <div class="todo-body">
+          <div class="todo-item" onclick="toggle(this)">
+            <div class="checkbox"></div>
+            <div class="todo-text"><strong>Explorer</strong> tous les CSV, vérifier shapes et types</div>
+            <div class="priority p-critical">CRIT</div>
+          </div>
+          <div class="todo-item" onclick="toggle(this)">
+            <div class="checkbox"></div>
+            <div class="todo-text"><strong>Merger</strong> orders + order_products + products + aisles + departments</div>
+            <div class="priority p-critical">CRIT</div>
+          </div>
+          <div class="todo-item" onclick="toggle(this)">
+            <div class="checkbox"></div>
+            <div class="todo-text"><strong>Nettoyer</strong> : NaN, doublons, cohérence order_number</div>
+            <div class="priority p-critical">CRIT</div>
+          </div>
+          <div class="todo-item" onclick="toggle(this)">
+            <div class="checkbox"></div>
+            <div class="todo-text"><strong>Split temporel</strong> : train/val/test par user (JAMAIS random)</div>
+            <div class="priority p-critical">CRIT</div>
+          </div>
+          <div class="todo-item" onclick="toggle(this)">
+            <div class="checkbox"></div>
+            <div class="todo-text"><strong>Vérifier leakage</strong> : aucun test_user dans le train</div>
+            <div class="priority p-critical">CRIT</div>
+          </div>
+          <div class="todo-item" onclick="toggle(this)">
+            <div class="checkbox"></div>
+            <div class="todo-text"><strong>Sauvegarder</strong> les 3 splits en parquet/pickle</div>
+            <div class="priority p-high">HIGH</div>
+          </div>
+          <div class="todo-item" onclick="toggle(this)">
+            <div class="checkbox"></div>
+            <div class="todo-text">Fixer <strong>seeds</strong> numpy, random, torch dès le début</div>
+            <div class="priority p-high">HIGH</div>
+          </div>
+          <div class="todo-item" onclick="toggle(this)">
+            <div class="checkbox"></div>
+            <div class="todo-text">Dessiner <strong>schéma ERD</strong> des tables dans le notebook</div>
+            <div class="priority p-med">MED</div>
+          </div>
+          <div class="todo-progress">
+            <div class="progress-bar"><div class="progress-fill" style="width:0%;background:var(--cyan)"></div></div>
+            <div class="progress-text" data-total="8">0 / 8</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- EDA -->
+      <div class="todo-card">
+        <div class="todo-header">
+          <div class="todo-stage-info">
+            <div class="todo-dot" style="background:var(--green)"></div>
+            <div class="todo-stage-name" style="color:var(--green)">02 — EDA & Insights</div>
+          </div>
+          <div class="todo-day-badge">J3–J4</div>
+        </div>
+        <div class="todo-body">
+          <div class="todo-item" onclick="toggle(this)">
+            <div class="checkbox"></div>
+            <div class="todo-text"><strong>Heatmap</strong> heures × jours de commande (plotly)</div>
+            <div class="priority p-high">HIGH</div>
+          </div>
+          <div class="todo-item" onclick="toggle(this)">
+            <div class="checkbox"></div>
+            <div class="todo-text"><strong>Distribution</strong> days_since_prior_order (KDE + violin)</div>
+            <div class="priority p-high">HIGH</div>
+          </div>
+          <div class="todo-item" onclick="toggle(this)">
+            <div class="checkbox"></div>
+            <div class="todo-text"><strong>Top produits</strong> par reorder rate (stickiness)</div>
+            <div class="priority p-high">HIGH</div>
+          </div>
+          <div class="todo-item" onclick="toggle(this)">
+            <div class="checkbox"></div>
+            <div class="todo-text"><strong>Ratio bio</strong> par département (bar chart horizontal)</div>
+            <div class="priority p-high">HIGH</div>
+          </div>
+          <div class="todo-item" onclick="toggle(this)">
+            <div class="checkbox"></div>
+            <div class="todo-text"><strong>First-in-cart</strong> : quels produits en position 1 ?</div>
+            <div class="priority p-high">HIGH</div>
+          </div>
+          <div class="todo-item" onclick="toggle(this)">
+            <div class="checkbox"></div>
+            <div class="todo-text"><strong>Market basket</strong> Apriori/FP-Growth (mlxtend)</div>
+            <div class="priority p-high">HIGH</div>
+          </div>
+          <div class="todo-item" onclick="toggle(this)">
+            <div class="checkbox"></div>
+            <div class="todo-text"><strong>Co-purchase network</strong> (NetworkX + Pyvis interactif)</div>
+            <div class="priority p-med">MED</div>
+          </div>
+          <div class="todo-item" onclick="toggle(this)">
+            <div class="checkbox"></div>
+            <div class="todo-text"><strong>Segmentation</strong> KMeans + UMAP + profils nommés</div>
+            <div class="priority p-med">MED</div>
+          </div>
+          <div class="todo-item" onclick="toggle(this)">
+            <div class="checkbox"></div>
+            <div class="todo-text">Vérifier : <strong>titres, axes, légendes</strong> sur chaque viz</div>
+            <div class="priority p-critical">CRIT</div>
+          </div>
+          <div class="todo-progress">
+            <div class="progress-bar"><div class="progress-fill" style="width:0%;background:var(--green)"></div></div>
+            <div class="progress-text" data-total="9">0 / 9</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BASELINES -->
+      <div class="todo-card">
+        <div class="todo-header">
+          <div class="todo-stage-info">
+            <div class="todo-dot" style="background:var(--yellow)"></div>
+            <div class="todo-stage-name" style="color:var(--yellow)">03 — Baselines & Survival</div>
+          </div>
+          <div class="todo-day-badge">J5–J6</div>
+        </div>
+        <div class="todo-body">
+          <div class="todo-item" onclick="toggle(this)">
+            <div class="checkbox"></div>
+            <div class="todo-text"><strong>Popular items</strong> baseline (top reorder rate global)</div>
+            <div class="priority p-critical">CRIT</div>
+          </div>
+          <div class="todo-item" onclick="toggle(this)">
+            <div class="checkbox"></div>
+            <div class="todo-text"><strong>User frequent items</strong> baseline (historique perso)</div>
+            <div class="priority p-critical">CRIT</div>
+          </div>
+          <div class="todo-item" onclick="toggle(this)">
+            <div class="checkbox"></div>
+            <div class="todo-text"><strong>Co-occurrence</strong> baseline (produits souvent ensemble)</div>
+            <div class="priority p-critical">CRIT</div>
+          </div>
+          <div class="todo-item" onclick="toggle(this)">
+            <div class="checkbox"></div>
+            <div class="todo-text"><strong>Logistic Regression</strong> baseline (features simples)</div>
+            <div class="priority p-high">HIGH</div>
+          </div>
+          <div class="todo-item" onclick="toggle(this)">
+            <div class="checkbox"></div>
+            <div class="todo-text"><strong>Feature engineering</strong> complet 200+ features</div>
+            <div class="priority p-critical">CRIT</div>
+          </div>
+          <div class="todo-item" onclick="toggle(this)">
+            <div class="checkbox"></div>
+            <div class="todo-text"><strong>Survival Analysis</strong> Kaplan-Meier par segment</div>
+            <div class="priority p-high">HIGH</div>
+          </div>
+          <div class="todo-item" onclick="toggle(this)">
+            <div class="checkbox"></div>
+            <div class="todo-text"><strong>Weibull AFT</strong> pour prédire time-to-next-order</div>
+            <div class="priority p-high">HIGH</div>
+          </div>
+          <div class="todo-item" onclick="toggle(this)">
+            <div class="checkbox"></div>
+            <div class="todo-text">Évaluer baselines : <strong>Recall@K, NDCG@K, PR-AUC</strong></div>
+            <div class="priority p-critical">CRIT</div>
+          </div>
+          <div class="todo-progress">
+            <div class="progress-bar"><div class="progress-fill" style="width:0%;background:var(--yellow)"></div></div>
+            <div class="progress-text" data-total="8">0 / 8</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STAGE 1 GRU -->
+      <div class="todo-card">
+        <div class="todo-header">
+          <div class="todo-stage-info">
+            <div class="todo-dot" style="background:var(--purple)"></div>
+            <div class="todo-stage-name" style="color:var(--purple)">04 — Stage 1 : GRU Retrieval</div>
+          </div>
+          <div class="todo-day-badge">J7–J8</div>
+        </div>
+        <div class="todo-body">
+          <div class="todo-item" onclick="toggle(this)">
+            <div class="checkbox"></div>
+            <div class="todo-text"><strong>Construire séquences</strong> user → [produits ordonnés temporellement]</div>
+            <div class="priority p-critical">CRIT</div>
+          </div>
+          <div class="todo-item" onclick="toggle(this)">
+            <div class="checkbox"></div>
+            <div class="todo-text"><strong>DataLoader PyTorch</strong> avec padding + masking</div>
+            <div class="priority p-critical">CRIT</div>
+          </div>
+          <div class="todo-item" onclick="toggle(this)">
+            <div class="checkbox"></div>
+            <div class="todo-text"><strong>Architecture GRU</strong> : Embedding → GRU → dot product</div>
+            <div class="priority p-critical">CRIT</div>
+          </div>
+          <div class="todo-item" onclick="toggle(this)">
+            <div class="checkbox"></div>
+            <div class="todo-text"><strong>InfoNCE Loss</strong> avec in-batch negatives</div>
+            <div class="priority p-critical">CRIT</div>
+          </div>
+          <div class="todo-item" onclick="toggle(this)">
+            <div class="checkbox"></div>
+            <div class="todo-text"><strong>Sanity check</strong> sur 20% du dataset d'abord</div>
+            <div class="priority p-critical">CRIT</div>
+          </div>
+          <div class="todo-item" onclick="toggle(this)">
+            <div class="checkbox"></div>
+            <div class="todo-text"><strong>Entraînement complet</strong> sur GPU (Colab/Kaggle)</div>
+            <div class="priority p-critical">CRIT</div>
+          </div>
+          <div class="todo-item" onclick="toggle(this)">
+            <div class="checkbox"></div>
+            <div class="todo-text">Métriques : <strong>Recall@20/50, NDCG@20, MRR@K</strong></div>
+            <div class="priority p-critical">CRIT</div>
+          </div>
+          <div class="todo-item" onclick="toggle(this)">
+            <div class="checkbox"></div>
+            <div class="todo-text">Sauvegarder <strong>score_stage1</strong> pour Stage 2</div>
+            <div class="priority p-critical">CRIT</div>
+          </div>
+          <div class="todo-item" onclick="toggle(this)">
+            <div class="checkbox"></div>
+            <div class="todo-text">Plot <strong>training/val loss curves</strong></div>
+            <div class="priority p-high">HIGH</div>
+          </div>
+          <div class="todo-progress">
+            <div class="progress-bar"><div class="progress-fill" style="width:0%;background:var(--purple)"></div></div>
+            <div class="progress-text" data-total="9">0 / 9</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STAGE 2 -->
+      <div class="todo-card">
+        <div class="todo-header">
+          <div class="todo-stage-info">
+            <div class="todo-dot" style="background:var(--blue)"></div>
+            <div class="todo-stage-name" style="color:var(--blue)">05 — Stage 2 : LightGBM Ranking</div>
+          </div>
+          <div class="todo-day-badge">J9</div>
+        </div>
+        <div class="todo-body">
+          <div class="todo-item" onclick="toggle(this)">
+            <div class="checkbox"></div>
+            <div class="todo-text"><strong>Input</strong> : Top-100 candidats GRU + 200+ features</div>
+            <div class="priority p-critical">CRIT</div>
+          </div>
+          <div class="todo-item" onclick="toggle(this)">
+            <div class="checkbox"></div>
+            <div class="todo-text">Inclure <strong>score_stage1</strong> comme feature LightGBM</div>
+            <div class="priority p-critical">CRIT</div>
+          </div>
+          <div class="todo-item" onclick="toggle(this)">
+            <div class="checkbox"></div>
+            <div class="todo-text"><strong>LightGBM baseline</strong> sans tuning (référence rapide)</div>
+            <div class="priority p-high">HIGH</div>
+          </div>
+          <div class="todo-item" onclick="toggle(this)">
+            <div class="checkbox"></div>
+            <div class="todo-text"><strong>Optuna tuning</strong> : learning_rate, depth, num_leaves</div>
+            <div class="priority p-high">HIGH</div>
+          </div>
+          <div class="todo-item" onclick="toggle(this)">
+            <div class="checkbox"></div>
+            <div class="todo-text"><strong>SHAP beeswarm</strong> plot (top 20 features)</div>
+            <div class="priority p-high">HIGH</div>
+          </div>
+          <div class="todo-item" onclick="toggle(this)">
+            <div class="checkbox"></div>
+            <div class="todo-text"><strong>SHAP waterfall</strong> pour 3 users types</div>
+            <div class="priority p-med">MED</div>
+          </div>
+          <div class="todo-item" onclick="toggle(this)">
+            <div class="checkbox"></div>
+            <div class="todo-text">Métriques finales : <strong>PR-AUC, AUC, Precision@K, MRR@K</strong></div>
+            <div class="priority p-critical">CRIT</div>
+          </div>
+          <div class="todo-item" onclick="toggle(this)">
+            <div class="checkbox"></div>
+            <div class="todo-text"><strong>Courbe PR-AUC</strong> vs toutes les baselines</div>
+            <div class="priority p-high">HIGH</div>
+          </div>
+          <div class="todo-progress">
+            <div class="progress-bar"><div class="progress-fill" style="width:0%;background:var(--blue)"></div></div>
+            <div class="progress-text" data-total="8">0 / 8</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ABLATION -->
+      <div class="todo-card">
+        <div class="todo-header">
+          <div class="todo-stage-info">
+            <div class="todo-dot" style="background:var(--red)"></div>
+            <div class="todo-stage-name" style="color:var(--red)">06 — Ablation Study</div>
+          </div>
+          <div class="todo-day-badge">J9</div>
+        </div>
+        <div class="todo-body">
+          <div class="todo-item" onclick="toggle(this)">
+            <div class="checkbox"></div>
+            <div class="todo-text">Config <strong>référence</strong> : modèle complet → noter toutes métriques</div>
+            <div class="priority p-critical">CRIT</div>
+          </div>
+          <div class="todo-item" onclick="toggle(this)">
+            <div class="checkbox"></div>
+            <div class="todo-text">Test <strong>sans GRU</strong> (avg embeddings) → mesurer Δ Recall@20</div>
+            <div class="priority p-critical">CRIT</div>
+          </div>
+          <div class="todo-item" onclick="toggle(this)">
+            <div class="checkbox"></div>
+            <div class="todo-text">Test <strong>sans time features</strong> → mesurer Δ PR-AUC</div>
+            <div class="priority p-critical">CRIT</div>
+          </div>
+          <div class="todo-item" onclick="toggle(this)">
+            <div class="checkbox"></div>
+            <div class="todo-text">Test <strong>sans score_stage1</strong> dans LightGBM → impact ?</div>
+            <div class="priority p-critical">CRIT</div>
+          </div>
+          <div class="todo-item" onclick="toggle(this)">
+            <div class="checkbox"></div>
+            <div class="todo-text">Test <strong>K=50 vs 100 vs 200</strong> candidats GRU</div>
+            <div class="priority p-high">HIGH</div>
+          </div>
+          <div class="todo-item" onclick="toggle(this)">
+            <div class="checkbox"></div>
+            <div class="todo-text">Test <strong>random negatives</strong> vs in-batch negatives</div>
+            <div class="priority p-high">HIGH</div>
+          </div>
+          <div class="todo-item" onclick="toggle(this)">
+            <div class="checkbox"></div>
+            <div class="todo-text">Test <strong>embed_dim 64 vs 128 vs 256</strong></div>
+            <div class="priority p-med">MED</div>
+          </div>
+          <div class="todo-item" onclick="toggle(this)">
+            <div class="checkbox"></div>
+            <div class="todo-text">Produire <strong>tableau + grouped bar chart</strong> comparatif</div>
+            <div class="priority p-critical">CRIT</div>
+          </div>
+          <div class="todo-progress">
+            <div class="progress-bar"><div class="progress-fill" style="width:0%;background:var(--red)"></div></div>
+            <div class="progress-text" data-total="8">0 / 8</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PRODUCT / FINITION -->
+      <div class="todo-card" style="grid-column: 1 / -1">
+        <div class="todo-header">
+          <div class="todo-stage-info">
+            <div class="todo-dot" style="background:var(--orange)"></div>
+            <div class="todo-stage-name" style="color:var(--orange)">07 — Product Layer & Finition</div>
+          </div>
+          <div class="todo-day-badge">J10</div>
+        </div>
+        <div class="todo-body" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:0 40px">
+          <div>
+            <div style="font-family:'Space Mono',monospace;font-size:9px;color:var(--text-dim);letter-spacing:0.2em;text-transform:uppercase;padding:12px 0 8px">Reproductibilité</div>
+            <div class="todo-item" onclick="toggle(this)">
+              <div class="checkbox"></div>
+              <div class="todo-text"><strong>requirements.txt</strong> avec versions exactes</div>
+              <div class="priority p-critical">CRIT</div>
+            </div>
+            <div class="todo-item" onclick="toggle(this)">
+              <div class="checkbox"></div>
+              <div class="todo-text"><strong>Tester notebook</strong> sur machine tierce (zero to run)</div>
+              <div class="priority p-critical">CRIT</div>
+            </div>
+            <div class="todo-item" onclick="toggle(this)">
+              <div class="checkbox"></div>
+              <div class="todo-text">Seeds fixés : <strong>numpy, torch, random, sklearn</strong></div>
+              <div class="priority p-critical">CRIT</div>
+            </div>
+          </div>
+          <div>
+            <div style="font-family:'Space Mono',monospace;font-size:9px;color:var(--text-dim);letter-spacing:0.2em;text-transform:uppercase;padding:12px 0 8px">Dashboard & Visualisation</div>
+            <div class="todo-item" onclick="toggle(this)">
+              <div class="checkbox"></div>
+              <div class="todo-text"><strong>Streamlit</strong> : EDA interactive + reco par user_id</div>
+              <div class="priority p-high">HIGH</div>
+            </div>
+            <div class="todo-item" onclick="toggle(this)">
+              <div class="checkbox"></div>
+              <div class="todo-text"><strong>UMAP embeddings</strong> produits colorés par aisle</div>
+              <div class="priority p-high">HIGH</div>
+            </div>
+            <div class="todo-item" onclick="toggle(this)">
+              <div class="checkbox"></div>
+              <div class="todo-text"><strong>Nearest neighbors</strong> sanity check sur embeddings</div>
+              <div class="priority p-med">MED</div>
+            </div>
+          </div>
+          <div>
+            <div style="font-family:'Space Mono',monospace;font-size:9px;color:var(--text-dim);letter-spacing:0.2em;text-transform:uppercase;padding:12px 0 8px">Storytelling & Soutenance</div>
+            <div class="todo-item" onclick="toggle(this)">
+              <div class="checkbox"></div>
+              <div class="todo-text"><strong>10 questions business</strong> toutes répondues explicitement</div>
+              <div class="priority p-critical">CRIT</div>
+            </div>
+            <div class="todo-item" onclick="toggle(this)">
+              <div class="checkbox"></div>
+              <div class="todo-text"><strong>Cold-start strategy</strong> documentée dans le notebook</div>
+              <div class="priority p-high">HIGH</div>
+            </div>
+            <div class="todo-item" onclick="toggle(this)">
+              <div class="checkbox"></div>
+              <div class="todo-text"><strong>README.md</strong> + argument soutenance préparé</div>
+              <div class="priority p-med">MED</div>
+            </div>
+          </div>
+        </div>
+        <div style="padding:0 24px 20px">
+          <div class="todo-progress">
+            <div class="progress-bar"><div class="progress-fill" style="width:0%;background:var(--orange)"></div></div>
+            <div class="progress-text" data-total="9">0 / 9</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Legend -->
+    <div class="legend">
+      <div class="legend-item"><div class="priority p-critical" style="margin:0">CRIT</div> Bloquant — à faire absolument</div>
+      <div class="legend-item"><div class="priority p-high" style="margin:0">HIGH</div> Fortement recommandé</div>
+      <div class="legend-item"><div class="priority p-med" style="margin:0">MED</div> Valeur ajoutée</div>
+      <div class="legend-item"><div class="priority p-bonus" style="margin:0">BONUS</div> Si temps restant</div>
+      <div class="legend-item" style="margin-left:auto;color:var(--text-mid)">Cliquez sur les tâches pour les cocher ✓</div>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+function toggle(item) {
+  item.classList.toggle('done');
+  if (item.classList.contains('done')) {
+    item.querySelector('.checkbox').textContent = '✓';
+  } else {
+    item.querySelector('.checkbox').textContent = '';
+  }
+  updateProgress(item.closest('.todo-card'));
+}
+
+function updateProgress(card) {
+  const items = card.querySelectorAll('.todo-item');
+  const done = card.querySelectorAll('.todo-item.done').length;
+  const total = items.length;
+  const pct = total > 0 ? (done / total) * 100 : 0;
+  const fill = card.querySelector('.progress-fill');
+  const text = card.querySelector('.progress-text');
+  if (fill) fill.style.width = pct + '%';
+  if (text) text.textContent = done + ' / ' + total;
+}
+</script>
+
+</body>
+</html>
