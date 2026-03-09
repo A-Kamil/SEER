@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NextBuy — Workflow & Todo List</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg: #080C14;
@@ -1326,6 +1326,503 @@ function updateProgress(card) {
   if (text) text.textContent = done + ' / ' + total;
 }
 </script>
+
+
+<!-- ══════════════════════════════════════════════════════════════════════ -->
+<!-- SECTION: SEER Industrial Grade Repo Structure (★★★★★)               -->
+<!-- ══════════════════════════════════════════════════════════════════════ -->
+<style>
+.seer-section {
+  --ss-bg: #060810; --ss-s1: #0D1120; --ss-s2: #111828;
+  --ss-border: #192236; --ss-border2: #1E2A40;
+  --ss-blue: #3B82F6; --ss-blue2: #60A5FA; --ss-cyan: #06B6D4;
+  --ss-green: #10B981; --ss-green2: #34D399; --ss-orange: #F59E0B;
+  --ss-red: #EF4444; --ss-purple: #8B5CF6; --ss-purple2: #A78BFA;
+  --ss-pink: #EC4899; --ss-yellow: #EAB308;
+  --ss-text: #F1F5F9; --ss-mid: #94A3B8; --ss-dim: #475569;
+  --ss-mono: 'JetBrains Mono', monospace;
+  background: var(--ss-bg);
+  color: var(--ss-text);
+  font-family: var(--ss-mono);
+  position: relative;
+}
+.seer-section .ss-wrap { max-width:1500px; margin:0 auto; padding:48px 40px; }
+
+/* HEADER */
+.seer-section .ss-hdr { display:flex; align-items:flex-end; justify-content:space-between; padding-bottom:28px; border-bottom:1px solid var(--ss-border2); margin-bottom:40px; }
+.seer-section .ss-hdr-tag { font-size:10px; color:var(--ss-blue); letter-spacing:.3em; text-transform:uppercase; margin-bottom:6px; }
+.seer-section .ss-hdr-title { font-family:'Syne',sans-serif; font-size:64px; font-weight:800; letter-spacing:-.04em; line-height:1; }
+.seer-section .ss-hdr-title .acc { color:var(--ss-blue); }
+.seer-section .ss-hdr-sub { font-size:11px; color:var(--ss-dim); margin-top:10px; letter-spacing:.08em; }
+.seer-section .ss-hdr-right { display:flex; flex-direction:column; align-items:flex-end; gap:6px; }
+.seer-section .ss-star-row { display:flex; gap:4px; font-size:18px; }
+.seer-section .ss-star { color:var(--ss-yellow); }
+.seer-section .ss-star.off { color:var(--ss-border2); }
+.seer-section .ss-level-label { font-size:11px; color:var(--ss-yellow); letter-spacing:.1em; margin-top:2px; }
+
+/* GRID */
+.seer-section .ss-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.seer-section .ss-span2 { grid-column:1/-1; }
+
+/* PANEL */
+.seer-section .ss-panel { background:var(--ss-s1); border:1px solid var(--ss-border2); border-radius:14px; overflow:hidden; }
+.seer-section .ss-ph { padding:12px 18px; background:var(--ss-s2); border-bottom:1px solid var(--ss-border); display:flex; align-items:center; justify-content:space-between; }
+.seer-section .ss-ph-title { font-size:10px; color:var(--ss-mid); letter-spacing:.2em; text-transform:uppercase; display:flex; align-items:center; gap:8px; }
+.seer-section .ss-ph-badge { font-size:9px; color:var(--ss-dim); background:var(--ss-bg); border:1px solid var(--ss-border); padding:2px 8px; border-radius:4px; }
+.seer-section .ss-pb { padding:16px 18px; }
+
+/* TREE */
+.seer-section .ss-tree { display:flex; flex-direction:column; gap:1px; }
+.seer-section .ss-ti { display:flex; align-items:center; gap:6px; padding:4px 6px; border-radius:5px; transition:background .1s; cursor:default; }
+.seer-section .ss-ti:hover { background:rgba(255,255,255,.03); }
+.seer-section .ss-ti-icon { font-size:13px; width:18px; text-align:center; flex-shrink:0; }
+.seer-section .ss-ti-name { font-size:12px; font-weight:500; flex:1; }
+.seer-section .ss-ti-desc { font-size:10px; color:var(--ss-dim); white-space:nowrap; }
+.seer-section .ss-ti-tag { font-size:8px; padding:1px 5px; border-radius:3px; flex-shrink:0; letter-spacing:.05em; font-weight:700; }
+.seer-section .i1 { padding-left:22px; }
+.seer-section .i2 { padding-left:42px; }
+.seer-section .i3 { padding-left:62px; }
+.seer-section .i4 { padding-left:82px; }
+
+/* file colors */
+.seer-section .cd   { color:var(--ss-blue2); }
+.seer-section .cpy  { color:var(--ss-green2); }
+.seer-section .cfg  { color:var(--ss-orange); }
+.seer-section .cmt  { color:var(--ss-cyan); }
+.seer-section .cnb  { color:var(--ss-yellow); }
+.seer-section .cdim { color:var(--ss-dim); }
+.seer-section .crd  { color:var(--ss-red); }
+.seer-section .cml  { color:var(--ss-purple2); }
+.seer-section .cpk  { color:var(--ss-pink); }
+
+/* tag colors */
+.seer-section .tc  { background:rgba(239,68,68,.12); color:var(--ss-red); border:1px solid rgba(239,68,68,.25); }
+.seer-section .tb  { background:rgba(59,130,246,.1); color:var(--ss-blue2); border:1px solid rgba(59,130,246,.2); }
+.seer-section .tml { background:rgba(139,92,246,.1); color:var(--ss-purple2); border:1px solid rgba(139,92,246,.2); }
+.seer-section .tg  { background:rgba(16,185,129,.1); color:var(--ss-green2); border:1px solid rgba(16,185,129,.2); }
+.seer-section .to  { background:rgba(245,158,11,.1); color:var(--ss-orange); border:1px solid rgba(245,158,11,.2); }
+.seer-section .tp  { background:rgba(236,72,153,.1); color:var(--ss-pink); border:1px solid rgba(236,72,153,.2); }
+.seer-section .tcy { background:rgba(6,182,212,.1); color:var(--ss-cyan); border:1px solid rgba(6,182,212,.2); }
+
+/* DIFF GRID */
+.seer-section .ss-diff-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.seer-section .ss-diff-card { border-radius:10px; overflow:hidden; border:1px solid var(--ss-border2); }
+.seer-section .ss-diff-header { padding:10px 16px; font-size:10px; letter-spacing:.2em; text-transform:uppercase; font-weight:700; display:flex; align-items:center; gap:8px; }
+.seer-section .ss-diff-body { padding:14px 16px; display:flex; flex-direction:column; gap:6px; }
+.seer-section .ss-diff-new .ss-diff-header { background:rgba(16,185,129,.08); color:var(--ss-green2); border-bottom:1px solid rgba(16,185,129,.15); }
+.seer-section .ss-diff-new { background:rgba(16,185,129,.03); }
+.seer-section .ss-diff-keep .ss-diff-header { background:rgba(59,130,246,.08); color:var(--ss-blue2); border-bottom:1px solid rgba(59,130,246,.15); }
+.seer-section .ss-diff-keep { background:rgba(59,130,246,.03); }
+.seer-section .ss-diff-item { display:flex; align-items:flex-start; gap:10px; padding:8px 10px; background:var(--ss-s1); border-radius:6px; border:1px solid var(--ss-border); }
+.seer-section .ss-diff-item-icon { font-size:14px; flex-shrink:0; }
+.seer-section .ss-diff-item-name { font-size:12px; font-weight:600; color:var(--ss-text); margin-bottom:2px; }
+.seer-section .ss-diff-item-desc { font-size:10px; color:var(--ss-dim); line-height:1.5; }
+
+/* PIPELINE */
+.seer-section .ss-pipeline { display:flex; align-items:center; overflow-x:auto; padding:4px 0; }
+.seer-section .ss-pipe-step { display:flex; flex-direction:column; align-items:center; background:var(--ss-s2); border:1px solid var(--ss-border2); border-radius:10px; padding:14px 18px; flex-shrink:0; min-width:130px; }
+.seer-section .ss-pipe-icon { font-size:22px; margin-bottom:6px; }
+.seer-section .ss-pipe-name { font-size:11px; font-weight:700; color:var(--ss-text); margin-bottom:3px; }
+.seer-section .ss-pipe-detail { font-size:9px; color:var(--ss-dim); text-align:center; line-height:1.5; }
+.seer-section .ss-pipe-arrow { font-size:16px; color:var(--ss-border2); padding:0 8px; flex-shrink:0; }
+.seer-section .ss-pipe-step.s-trigger { border-color:rgba(16,185,129,.3); }
+.seer-section .ss-pipe-step.s-trigger .ss-pipe-name { color:var(--ss-green2); }
+.seer-section .ss-pipe-step.s-lint { border-color:rgba(59,130,246,.3); }
+.seer-section .ss-pipe-step.s-lint .ss-pipe-name { color:var(--ss-blue2); }
+.seer-section .ss-pipe-step.s-test { border-color:rgba(139,92,246,.3); }
+.seer-section .ss-pipe-step.s-test .ss-pipe-name { color:var(--ss-purple2); }
+.seer-section .ss-pipe-step.s-build { border-color:rgba(245,158,11,.3); }
+.seer-section .ss-pipe-step.s-build .ss-pipe-name { color:var(--ss-orange); }
+.seer-section .ss-pipe-step.s-deploy { border-color:rgba(236,72,153,.3); }
+.seer-section .ss-pipe-step.s-deploy .ss-pipe-name { color:var(--ss-pink); }
+
+/* DOCKER */
+.seer-section .ss-docker-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+.seer-section .ss-docker-card { background:var(--ss-s2); border:1px solid var(--ss-border2); border-radius:8px; padding:14px; border-top:3px solid transparent; }
+.seer-section .ss-docker-card.d-nb  { border-top-color:var(--ss-yellow); }
+.seer-section .ss-docker-card.d-app { border-top-color:var(--ss-cyan); }
+.seer-section .ss-docker-card.d-gpu { border-top-color:var(--ss-purple); }
+.seer-section .ss-dk-name { font-size:13px; font-weight:700; margin-bottom:4px; }
+.seer-section .ss-dk-from { font-size:10px; color:var(--ss-dim); margin-bottom:8px; }
+.seer-section .ss-dk-detail { font-size:10px; color:var(--ss-mid); line-height:1.6; }
+
+/* MLFLOW */
+.seer-section .ss-mlflow-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
+.seer-section .ss-mlf-card { background:var(--ss-s2); border:1px solid var(--ss-border2); border-radius:8px; padding:14px; }
+.seer-section .ss-mlf-icon { font-size:20px; margin-bottom:8px; }
+.seer-section .ss-mlf-name { font-size:12px; font-weight:700; color:var(--ss-text); margin-bottom:4px; }
+.seer-section .ss-mlf-desc { font-size:10px; color:var(--ss-dim); line-height:1.5; }
+
+/* TESTS */
+.seer-section .ss-test-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; }
+.seer-section .ss-test-card { background:var(--ss-s2); border:1px solid var(--ss-border2); border-radius:8px; padding:12px 14px; border-left:3px solid var(--ss-purple); }
+.seer-section .ss-test-file { font-size:11px; font-weight:700; color:var(--ss-purple2); margin-bottom:6px; }
+.seer-section .ss-test-case { display:flex; align-items:center; gap:8px; font-size:10px; color:var(--ss-mid); padding:3px 0; border-bottom:1px solid var(--ss-border); }
+.seer-section .ss-test-case:last-child { border:none; }
+.seer-section .ss-test-case::before { content:'▸'; color:var(--ss-green2); flex-shrink:0; }
+
+/* SEPARATOR */
+.seer-section .ss-sep { grid-column:1/-1; display:flex; align-items:center; gap:12px; font-size:9px; color:var(--ss-dim); letter-spacing:.3em; text-transform:uppercase; margin:8px 0; }
+.seer-section .ss-sep::before, .seer-section .ss-sep::after { content:''; flex:1; height:1px; background:var(--ss-border); }
+
+/* PYPROJECT */
+.seer-section .ss-py-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+</style>
+
+<div class="seer-section">
+  <div class="ss-wrap">
+
+    <!-- HEADER -->
+    <div class="ss-hdr">
+      <div class="ss-hdr-left">
+        <div class="ss-hdr-tag">// SEER — Industrial Grade Repo</div>
+        <div class="ss-hdr-title">STRUCT<span class="acc">URE</span></div>
+        <div class="ss-hdr-sub">Docker · MLflow · GitHub Actions · pytest · pre-commit · pyproject.toml</div>
+      </div>
+      <div class="ss-hdr-right">
+        <div class="ss-star-row">
+          <div class="ss-star">★</div><div class="ss-star">★</div>
+          <div class="ss-star">★</div><div class="ss-star">★</div>
+          <div class="ss-star">★</div>
+        </div>
+        <div class="ss-level-label">INDUSTRIEL</div>
+      </div>
+    </div>
+
+    <!-- WHAT CHANGES -->
+    <div class="ss-grid" style="margin-bottom:16px">
+      <div class="ss-sep">Ce qui change par rapport à ⭐⭐⭐</div>
+      <div class="ss-span2">
+        <div class="ss-diff-grid">
+          <div class="ss-diff-card ss-diff-new">
+            <div class="ss-diff-header">✦ Ajouté</div>
+            <div class="ss-diff-body">
+              <div class="ss-diff-item"><div class="ss-diff-item-icon">🐳</div><div><div class="ss-diff-item-name">Docker + docker-compose</div><div class="ss-diff-item-desc">3 services : notebook / streamlit / gpu-trainer. Tourne partout identique.</div></div></div>
+              <div class="ss-diff-item"><div class="ss-diff-item-icon">📊</div><div><div class="ss-diff-item-name">MLflow Tracking</div><div class="ss-diff-item-desc">Chaque run loggué : params, métriques, artefacts. Comparaison visuelle.</div></div></div>
+              <div class="ss-diff-item"><div class="ss-diff-item-icon">🧪</div><div><div class="ss-diff-item-name">pytest + fixtures</div><div class="ss-diff-item-desc">Tests unitaires sur splitter, features, metrics. CI bloque si ça casse.</div></div></div>
+              <div class="ss-diff-item"><div class="ss-diff-item-icon">⚙️</div><div><div class="ss-diff-item-name">GitHub Actions CI/CD</div><div class="ss-diff-item-desc">lint → test → build Docker à chaque push. Badge vert sur le README.</div></div></div>
+              <div class="ss-diff-item"><div class="ss-diff-item-icon">🪝</div><div><div class="ss-diff-item-name">pre-commit hooks</div><div class="ss-diff-item-desc">black + flake8 + isort bloquent le commit si le code est sale.</div></div></div>
+              <div class="ss-diff-item"><div class="ss-diff-item-icon">📦</div><div><div class="ss-diff-item-name">pyproject.toml</div><div class="ss-diff-item-desc">Remplace requirements.txt. Sépare deps core / dev / gpu. Standard PEP 517.</div></div></div>
+              <div class="ss-diff-item"><div class="ss-diff-item-icon">📝</div><div><div class="ss-diff-item-name">structlog / loguru</div><div class="ss-diff-item-desc">Logs structurés JSON. Chaque étape pipeline loggée avec timestamp + context.</div></div></div>
+            </div>
+          </div>
+          <div class="ss-diff-card ss-diff-keep">
+            <div class="ss-diff-header">✓ Conservé &amp; amélioré</div>
+            <div class="ss-diff-body">
+              <div class="ss-diff-item"><div class="ss-diff-item-icon">📓</div><div><div class="ss-diff-item-name">notebooks/ 00→10</div><div class="ss-diff-item-desc">Identiques mais papermill-compatibles pour exécution automatique.</div></div></div>
+              <div class="ss-diff-item"><div class="ss-diff-item-icon">🐍</div><div><div class="ss-diff-item-name">src/ modulaire</div><div class="ss-diff-item-desc">+ __init__.py dans chaque module → package importable proprement.</div></div></div>
+              <div class="ss-diff-item"><div class="ss-diff-item-icon">⚙️</div><div><div class="ss-diff-item-name">Makefile</div><div class="ss-diff-item-desc">+ make test, make docker-build, make mlflow, make pre-commit.</div></div></div>
+              <div class="ss-diff-item"><div class="ss-diff-item-icon">📡</div><div><div class="ss-diff-item-name">Streamlit dashboard</div><div class="ss-diff-item-desc">Inchangé — tourne maintenant dans son propre container Docker.</div></div></div>
+              <div class="ss-diff-item"><div class="ss-diff-item-icon">⚙️</div><div><div class="ss-diff-item-name">configs/ YAML</div><div class="ss-diff-item-desc">+ hydra-core pour override des configs depuis CLI sans modifier les fichiers.</div></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ss-grid">
+
+      <!-- ARBORESCENCE GAUCHE -->
+      <div class="ss-panel">
+        <div class="ss-ph">
+          <div class="ss-ph-title">📁 Arborescence complète</div>
+          <div class="ss-ph-badge">seer/</div>
+        </div>
+        <div class="ss-pb">
+          <div class="ss-tree">
+            <div class="ss-ti"><div class="ss-ti-icon">📁</div><div class="ss-ti-name cd">seer/</div></div>
+
+            <div class="ss-ti i1"><div class="ss-ti-icon">📂</div><div class="ss-ti-name cd">.github/workflows/</div><div class="ss-ti-tag tg">CI/CD</div></div>
+            <div class="ss-ti i2"><div class="ss-ti-icon">⚙️</div><div class="ss-ti-name cfg">ci.yml</div><div class="ss-ti-desc">lint → test → build</div></div>
+            <div class="ss-ti i2"><div class="ss-ti-icon">⚙️</div><div class="ss-ti-name cfg">docker.yml</div><div class="ss-ti-desc">push image sur ghcr.io</div></div>
+
+            <div class="ss-ti i1" style="margin-top:6px"><div class="ss-ti-icon">📂</div><div class="ss-ti-name cd">notebooks/</div><div class="ss-ti-tag tc">LIVRABLE</div></div>
+            <div class="ss-ti i2"><div class="ss-ti-icon">📓</div><div class="ss-ti-name cnb">00_setup.ipynb</div></div>
+            <div class="ss-ti i2"><div class="ss-ti-icon">📓</div><div class="ss-ti-name cnb">01_etl.ipynb</div></div>
+            <div class="ss-ti i2"><div class="ss-ti-icon">📓</div><div class="ss-ti-name cnb">02_eda.ipynb</div></div>
+            <div class="ss-ti i2"><div class="ss-ti-icon">📓</div><div class="ss-ti-name cnb">03_features.ipynb</div></div>
+            <div class="ss-ti i2"><div class="ss-ti-icon">📓</div><div class="ss-ti-name cnb">04_baselines.ipynb</div></div>
+            <div class="ss-ti i2"><div class="ss-ti-icon">📓</div><div class="ss-ti-name cnb">05_survival.ipynb</div></div>
+            <div class="ss-ti i2"><div class="ss-ti-icon">📓</div><div class="ss-ti-name cnb">06_gru_stage1.ipynb</div></div>
+            <div class="ss-ti i2"><div class="ss-ti-icon">📓</div><div class="ss-ti-name cnb">07_lgbm_stage2.ipynb</div></div>
+            <div class="ss-ti i2"><div class="ss-ti-icon">📓</div><div class="ss-ti-name cnb">08_ablation.ipynb</div></div>
+            <div class="ss-ti i2"><div class="ss-ti-icon">📓</div><div class="ss-ti-name cnb">09_embeddings.ipynb</div></div>
+            <div class="ss-ti i2"><div class="ss-ti-icon">📓</div><div class="ss-ti-name cnb">10_conclusions.ipynb</div></div>
+
+            <div class="ss-ti i1" style="margin-top:6px"><div class="ss-ti-icon">📂</div><div class="ss-ti-name cd">src/</div><div class="ss-ti-tag tb">PACKAGE</div></div>
+            <div class="ss-ti i2"><div class="ss-ti-icon">🐍</div><div class="ss-ti-name cpy">__init__.py</div></div>
+
+            <div class="ss-ti i2"><div class="ss-ti-icon">📂</div><div class="ss-ti-name cd">data/</div></div>
+            <div class="ss-ti i3"><div class="ss-ti-icon">🐍</div><div class="ss-ti-name cpy">__init__.py</div></div>
+            <div class="ss-ti i3"><div class="ss-ti-icon">🐍</div><div class="ss-ti-name cpy">loader.py</div><div class="ss-ti-desc">Kaggle API + merge</div></div>
+            <div class="ss-ti i3"><div class="ss-ti-icon">🐍</div><div class="ss-ti-name cpy">cleaner.py</div><div class="ss-ti-desc">NaN, types, doublons</div></div>
+            <div class="ss-ti i3"><div class="ss-ti-icon">🐍</div><div class="ss-ti-name cpy">splitter.py</div><div class="ss-ti-desc">split temporel strict</div></div>
+
+            <div class="ss-ti i2"><div class="ss-ti-icon">📂</div><div class="ss-ti-name cd">features/</div></div>
+            <div class="ss-ti i3"><div class="ss-ti-icon">🐍</div><div class="ss-ti-name cpy">__init__.py</div></div>
+            <div class="ss-ti i3"><div class="ss-ti-icon">🐍</div><div class="ss-ti-name cpy">user_features.py</div></div>
+            <div class="ss-ti i3"><div class="ss-ti-icon">🐍</div><div class="ss-ti-name cpy">product_features.py</div></div>
+            <div class="ss-ti i3"><div class="ss-ti-icon">🐍</div><div class="ss-ti-name cpy">interaction_features.py</div></div>
+            <div class="ss-ti i3"><div class="ss-ti-icon">🐍</div><div class="ss-ti-name cpy">pipeline.py</div><div class="ss-ti-desc">sklearn Pipeline complet</div></div>
+
+            <div class="ss-ti i2"><div class="ss-ti-icon">📂</div><div class="ss-ti-name cd">models/</div></div>
+            <div class="ss-ti i3"><div class="ss-ti-icon">🐍</div><div class="ss-ti-name cpy">__init__.py</div></div>
+            <div class="ss-ti i3"><div class="ss-ti-icon">🐍</div><div class="ss-ti-name cml">gru_retrieval.py</div><div class="ss-ti-desc">GRU + InfoNCE</div></div>
+            <div class="ss-ti i3"><div class="ss-ti-icon">🐍</div><div class="ss-ti-name cml">dataset.py</div><div class="ss-ti-desc">DataLoader + padding</div></div>
+            <div class="ss-ti i3"><div class="ss-ti-icon">🐍</div><div class="ss-ti-name cml">trainer.py</div><div class="ss-ti-desc">train loop + MLflow</div></div>
+            <div class="ss-ti i3"><div class="ss-ti-icon">🐍</div><div class="ss-ti-name cml">lgbm_ranker.py</div><div class="ss-ti-desc">Stage 2 + optuna</div></div>
+            <div class="ss-ti i3"><div class="ss-ti-icon">🐍</div><div class="ss-ti-name cml">metrics.py</div><div class="ss-ti-desc">Recall@K, NDCG, MRR</div></div>
+
+            <div class="ss-ti i2"><div class="ss-ti-icon">📂</div><div class="ss-ti-name cd">evaluation/</div></div>
+            <div class="ss-ti i3"><div class="ss-ti-icon">🐍</div><div class="ss-ti-name cpy">ablation.py</div></div>
+            <div class="ss-ti i3"><div class="ss-ti-icon">🐍</div><div class="ss-ti-name cpy">compare.py</div></div>
+
+            <div class="ss-ti i2"><div class="ss-ti-icon">📂</div><div class="ss-ti-name cd">utils/</div><div class="ss-ti-tag tg">NEW</div></div>
+            <div class="ss-ti i3"><div class="ss-ti-icon">🐍</div><div class="ss-ti-name cpy">__init__.py</div></div>
+            <div class="ss-ti i3"><div class="ss-ti-icon">🐍</div><div class="ss-ti-name cpy">logger.py</div><div class="ss-ti-desc">structlog JSON</div></div>
+            <div class="ss-ti i3"><div class="ss-ti-icon">🐍</div><div class="ss-ti-name cpy">timer.py</div><div class="ss-ti-desc">@timer decorator</div></div>
+            <div class="ss-ti i3"><div class="ss-ti-icon">🐍</div><div class="ss-ti-name cpy">seed.py</div><div class="ss-ti-desc">set_all_seeds(42)</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ARBORESCENCE DROITE -->
+      <div class="ss-panel">
+        <div class="ss-ph">
+          <div class="ss-ph-title">📁 Suite arborescence</div>
+          <div class="ss-ph-badge">seer/</div>
+        </div>
+        <div class="ss-pb">
+          <div class="ss-tree">
+            <div class="ss-ti"><div class="ss-ti-icon">📂</div><div class="ss-ti-name cd">tests/</div><div class="ss-ti-tag tml">NEW</div></div>
+            <div class="ss-ti i1"><div class="ss-ti-icon">🐍</div><div class="ss-ti-name cml">conftest.py</div><div class="ss-ti-desc">fixtures partagées (df, splits)</div></div>
+            <div class="ss-ti i1"><div class="ss-ti-icon">🐍</div><div class="ss-ti-name cml">test_splitter.py</div><div class="ss-ti-desc">assert no leakage, shapes</div></div>
+            <div class="ss-ti i1"><div class="ss-ti-icon">🐍</div><div class="ss-ti-name cml">test_features.py</div><div class="ss-ti-desc">NaN, dtypes, ranges</div></div>
+            <div class="ss-ti i1"><div class="ss-ti-icon">🐍</div><div class="ss-ti-name cml">test_metrics.py</div><div class="ss-ti-desc">Recall@K, NDCG@K</div></div>
+            <div class="ss-ti i1"><div class="ss-ti-icon">🐍</div><div class="ss-ti-name cml">test_gru.py</div><div class="ss-ti-desc">forward pass, shapes tensors</div></div>
+            <div class="ss-ti i1"><div class="ss-ti-icon">🐍</div><div class="ss-ti-name cml">test_pipeline.py</div><div class="ss-ti-desc">ETL end-to-end sur mini dataset</div></div>
+
+            <div class="ss-ti" style="margin-top:6px"><div class="ss-ti-icon">📂</div><div class="ss-ti-name cd">docker/</div><div class="ss-ti-tag tcy">NEW</div></div>
+            <div class="ss-ti i1"><div class="ss-ti-icon">🐳</div><div class="ss-ti-name cfg">Dockerfile.notebook</div><div class="ss-ti-desc">jupyter + deps CPU</div></div>
+            <div class="ss-ti i1"><div class="ss-ti-icon">🐳</div><div class="ss-ti-name cfg">Dockerfile.streamlit</div><div class="ss-ti-desc">streamlit app</div></div>
+            <div class="ss-ti i1"><div class="ss-ti-icon">🐳</div><div class="ss-ti-name cfg">Dockerfile.gpu</div><div class="ss-ti-desc">pytorch/pytorch:2.x-cuda</div></div>
+            <div class="ss-ti i1"><div class="ss-ti-icon">🐳</div><div class="ss-ti-name cfg">docker-compose.yml</div><div class="ss-ti-desc">3 services + volumes partagés</div></div>
+
+            <div class="ss-ti" style="margin-top:6px"><div class="ss-ti-icon">📂</div><div class="ss-ti-name cd">dashboard/</div><div class="ss-ti-tag tp">STREAMLIT</div></div>
+            <div class="ss-ti i1"><div class="ss-ti-icon">🐍</div><div class="ss-ti-name cpy">app.py</div></div>
+            <div class="ss-ti i1"><div class="ss-ti-icon">📂</div><div class="ss-ti-name cd">pages/</div></div>
+            <div class="ss-ti i2"><div class="ss-ti-icon">🐍</div><div class="ss-ti-name cpy">01_eda.py</div></div>
+            <div class="ss-ti i2"><div class="ss-ti-icon">🐍</div><div class="ss-ti-name cpy">02_recommender.py</div></div>
+            <div class="ss-ti i2"><div class="ss-ti-icon">🐍</div><div class="ss-ti-name cpy">03_models.py</div></div>
+
+            <div class="ss-ti" style="margin-top:6px"><div class="ss-ti-icon">📂</div><div class="ss-ti-name cd">configs/</div><div class="ss-ti-tag to">HYDRA</div></div>
+            <div class="ss-ti i1"><div class="ss-ti-icon">⚙️</div><div class="ss-ti-name cfg">config.yaml</div><div class="ss-ti-desc">config principale</div></div>
+            <div class="ss-ti i1"><div class="ss-ti-icon">📂</div><div class="ss-ti-name cd">model/</div></div>
+            <div class="ss-ti i2"><div class="ss-ti-icon">⚙️</div><div class="ss-ti-name cfg">gru.yaml</div><div class="ss-ti-desc">embed_dim, hidden, lr</div></div>
+            <div class="ss-ti i2"><div class="ss-ti-icon">⚙️</div><div class="ss-ti-name cfg">lgbm.yaml</div><div class="ss-ti-desc">num_leaves, depth, reg</div></div>
+            <div class="ss-ti i1"><div class="ss-ti-icon">📂</div><div class="ss-ti-name cd">data/</div></div>
+            <div class="ss-ti i2"><div class="ss-ti-icon">⚙️</div><div class="ss-ti-name cfg">paths.yaml</div><div class="ss-ti-desc">raw, processed, models</div></div>
+
+            <div class="ss-ti" style="margin-top:6px"><div class="ss-ti-icon">📄</div><div class="ss-ti-name cmt">README.md</div><div class="ss-ti-tag tc">CRIT</div></div>
+            <div class="ss-ti"><div class="ss-ti-icon">📦</div><div class="ss-ti-name cfg">pyproject.toml</div><div class="ss-ti-tag tg">NEW</div></div>
+            <div class="ss-ti"><div class="ss-ti-icon">⚙️</div><div class="ss-ti-name cfg">Makefile</div><div class="ss-ti-desc">16 targets</div></div>
+            <div class="ss-ti"><div class="ss-ti-icon">🪝</div><div class="ss-ti-name cfg">.pre-commit-config.yaml</div><div class="ss-ti-tag tg">NEW</div></div>
+            <div class="ss-ti"><div class="ss-ti-icon">🔒</div><div class="ss-ti-name cdim">.env.example</div><div class="ss-ti-desc">KAGGLE + MLFLOW vars</div></div>
+            <div class="ss-ti"><div class="ss-ti-icon">🚫</div><div class="ss-ti-name cdim">.gitignore</div><div class="ss-ti-desc">data/, models/, mlruns/, .env</div></div>
+            <div class="ss-ti"><div class="ss-ti-icon">📂</div><div class="ss-ti-name cdim">data/</div><div class="ss-ti-desc">gitignored</div></div>
+            <div class="ss-ti"><div class="ss-ti-icon">📂</div><div class="ss-ti-name cdim">models/</div><div class="ss-ti-desc">gitignored — checkpoints</div></div>
+            <div class="ss-ti"><div class="ss-ti-icon">📂</div><div class="ss-ti-name cdim">mlruns/</div><div class="ss-ti-desc">gitignored — MLflow tracking</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CI/CD PIPELINE -->
+      <div class="ss-sep">GitHub Actions — CI/CD Pipeline</div>
+      <div class="ss-panel ss-span2">
+        <div class="ss-ph">
+          <div class="ss-ph-title">⚙️ .github/workflows/ci.yml — déclenché sur chaque push / PR</div>
+          <div class="ss-ph-badge">ubuntu-latest</div>
+        </div>
+        <div class="ss-pb">
+          <div class="ss-pipeline">
+            <div class="ss-pipe-step s-trigger">
+              <div class="ss-pipe-icon">🚀</div>
+              <div class="ss-pipe-name">Trigger</div>
+              <div class="ss-pipe-detail">push main<br>pull_request<br>schedule nightly</div>
+            </div>
+            <div class="ss-pipe-arrow">→</div>
+            <div class="ss-pipe-step s-lint">
+              <div class="ss-pipe-icon">🔍</div>
+              <div class="ss-pipe-name">Lint</div>
+              <div class="ss-pipe-detail">black --check<br>flake8 src/<br>isort --check</div>
+            </div>
+            <div class="ss-pipe-arrow">→</div>
+            <div class="ss-pipe-step s-test">
+              <div class="ss-pipe-icon">🧪</div>
+              <div class="ss-pipe-name">Test</div>
+              <div class="ss-pipe-detail">pytest tests/<br>coverage &gt; 80%<br>badges mis à jour</div>
+            </div>
+            <div class="ss-pipe-arrow">→</div>
+            <div class="ss-pipe-step s-build">
+              <div class="ss-pipe-icon">🐳</div>
+              <div class="ss-pipe-name">Build</div>
+              <div class="ss-pipe-detail">docker build<br>3 images<br>cache layers</div>
+            </div>
+            <div class="ss-pipe-arrow">→</div>
+            <div class="ss-pipe-step s-deploy">
+              <div class="ss-pipe-icon">📦</div>
+              <div class="ss-pipe-name">Publish</div>
+              <div class="ss-pipe-detail">push ghcr.io<br>tag :latest<br>tag :sha</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DOCKER -->
+      <div class="ss-sep">Docker — 3 services</div>
+      <div class="ss-panel ss-span2">
+        <div class="ss-ph">
+          <div class="ss-ph-title">🐳 docker-compose.yml</div>
+          <div class="ss-ph-badge">docker compose up</div>
+        </div>
+        <div class="ss-pb">
+          <div class="ss-docker-grid">
+            <div class="ss-docker-card d-nb">
+              <div class="ss-dk-name" style="color:var(--ss-yellow)">📓 notebook</div>
+              <div class="ss-dk-from">FROM python:3.11-slim</div>
+              <div class="ss-dk-detail">Jupyter Lab sur :8888<br>Volume monté sur notebooks/<br>Toutes deps CPU installées<br>Kernel ipykernel configuré</div>
+            </div>
+            <div class="ss-docker-card d-app">
+              <div class="ss-dk-name" style="color:var(--ss-cyan)">📡 streamlit</div>
+              <div class="ss-dk-from">FROM python:3.11-slim</div>
+              <div class="ss-dk-detail">Streamlit sur :8501<br>Volume monté sur models/<br>Charge checkpoints auto<br>Health check intégré</div>
+            </div>
+            <div class="ss-docker-card d-gpu">
+              <div class="ss-dk-name" style="color:var(--ss-purple2)">⚡ gpu-trainer</div>
+              <div class="ss-dk-from">FROM pytorch/pytorch:2.1.0-cuda11.8</div>
+              <div class="ss-dk-detail">Entraîne GRU Stage 1<br>Accès GPU via nvidia-docker<br>Sauvegarde checkpoints<br>Lance MLflow logging</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MLFLOW -->
+      <div class="ss-sep">MLflow — Experiment Tracking</div>
+      <div class="ss-panel ss-span2">
+        <div class="ss-ph">
+          <div class="ss-ph-title">📊 MLflow — loggué dans trainer.py et lgbm_ranker.py</div>
+          <div class="ss-ph-badge">localhost:5000</div>
+        </div>
+        <div class="ss-pb">
+          <div class="ss-mlflow-grid">
+            <div class="ss-mlf-card">
+              <div class="ss-mlf-icon">🏷️</div>
+              <div class="ss-mlf-name">Params loggués</div>
+              <div class="ss-mlf-desc">embed_dim, hidden_size, lr, batch_size, K, neg_strategy, num_leaves, depth</div>
+            </div>
+            <div class="ss-mlf-card">
+              <div class="ss-mlf-icon">📈</div>
+              <div class="ss-mlf-name">Métriques loggées</div>
+              <div class="ss-mlf-desc">Recall@20/50, NDCG@20, MRR@K, PR-AUC, AUC, train_loss, val_loss par epoch</div>
+            </div>
+            <div class="ss-mlf-card">
+              <div class="ss-mlf-icon">📦</div>
+              <div class="ss-mlf-name">Artefacts loggés</div>
+              <div class="ss-mlf-desc">model.pt, lgbm.pkl, SHAP plots, ablation_table.csv, embeddings.npy</div>
+            </div>
+            <div class="ss-mlf-card">
+              <div class="ss-mlf-icon">🔄</div>
+              <div class="ss-mlf-name">Run comparison</div>
+              <div class="ss-mlf-desc">UI sur :5000 compare visuellement tous les runs. Ablation study automatique.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TESTS -->
+      <div class="ss-sep">pytest — Tests unitaires</div>
+      <div class="ss-panel ss-span2">
+        <div class="ss-ph">
+          <div class="ss-ph-title">🧪 tests/ — coverage cible &gt; 80%</div>
+          <div class="ss-ph-badge">pytest -v --cov=src</div>
+        </div>
+        <div class="ss-pb">
+          <div class="ss-test-grid">
+            <div class="ss-test-card">
+              <div class="ss-test-file">test_splitter.py</div>
+              <div class="ss-test-case">aucun user_id en commun entre train/val/test</div>
+              <div class="ss-test-case">test apparaît toujours après train temporellement</div>
+              <div class="ss-test-case">taille splits cohérente avec le dataset</div>
+              <div class="ss-test-case">assert_no_leakage() raise sur données corrompues</div>
+            </div>
+            <div class="ss-test-card">
+              <div class="ss-test-file">test_features.py</div>
+              <div class="ss-test-case">zéro NaN dans le feature store final</div>
+              <div class="ss-test-case">reorder_rate entre 0.0 et 1.0</div>
+              <div class="ss-test-case">encodage cyclique sin²+cos²=1</div>
+              <div class="ss-test-case">score_stage1 présent dans les features Stage 2</div>
+            </div>
+            <div class="ss-test-card">
+              <div class="ss-test-file">test_metrics.py</div>
+              <div class="ss-test-case">Recall@K=1.0 quand target dans top-1</div>
+              <div class="ss-test-case">NDCG@K ≤ Recall@K toujours</div>
+              <div class="ss-test-case">MRR entre 0 et 1</div>
+              <div class="ss-test-case">résultats identiques avec seeds fixes</div>
+            </div>
+            <div class="ss-test-card">
+              <div class="ss-test-file">test_gru.py</div>
+              <div class="ss-test-case">forward pass sans NaN ni Inf</div>
+              <div class="ss-test-case">output shape = (batch_size, embed_dim)</div>
+              <div class="ss-test-case">loss décroît sur mini-batch</div>
+              <div class="ss-test-case">retrieve_top_k retourne exactement K items</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PYPROJECT + PRE-COMMIT -->
+      <div class="ss-panel">
+        <div class="ss-ph">
+          <div class="ss-ph-title">📦 pyproject.toml</div>
+          <div class="ss-ph-badge">PEP 517 — standard moderne</div>
+        </div>
+        <div class="ss-pb">
+          <div class="ss-tree">
+            <div class="ss-ti"><div class="ss-ti-icon">📦</div><div class="ss-ti-name cfg">[project]</div><div class="ss-ti-desc">name, version, python ≥3.11</div></div>
+            <div class="ss-ti i1"><div class="ss-ti-icon">📋</div><div class="ss-ti-name cpy">dependencies</div><div class="ss-ti-desc">pandas, numpy, lightgbm, lifelines...</div></div>
+            <div class="ss-ti i1"><div class="ss-ti-icon">🧪</div><div class="ss-ti-name cml">[project.optional-dependencies]</div></div>
+            <div class="ss-ti i2"><div class="ss-ti-icon">🔧</div><div class="ss-ti-name cpy">dev</div><div class="ss-ti-desc">pytest, black, flake8, isort, pre-commit</div></div>
+            <div class="ss-ti i2"><div class="ss-ti-icon">⚡</div><div class="ss-ti-name cpy">gpu</div><div class="ss-ti-desc">torch avec index cuda</div></div>
+            <div class="ss-ti i2"><div class="ss-ti-icon">📊</div><div class="ss-ti-name cpy">viz</div><div class="ss-ti-desc">plotly, pyvis, umap-learn</div></div>
+            <div class="ss-ti i1"><div class="ss-ti-icon">⚙️</div><div class="ss-ti-name cfg">[tool.black]</div><div class="ss-ti-desc">line-length = 88</div></div>
+            <div class="ss-ti i1"><div class="ss-ti-icon">⚙️</div><div class="ss-ti-name cfg">[tool.pytest.ini_options]</div><div class="ss-ti-desc">testpaths = ["tests"]</div></div>
+            <div class="ss-ti i1"><div class="ss-ti-icon">⚙️</div><div class="ss-ti-name cfg">[tool.coverage.report]</div><div class="ss-ti-desc">fail_under = 80</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ss-panel">
+        <div class="ss-ph">
+          <div class="ss-ph-title">🪝 .pre-commit-config.yaml</div>
+          <div class="ss-ph-badge">bloque le commit si sale</div>
+        </div>
+        <div class="ss-pb">
+          <div class="ss-tree">
+            <div class="ss-ti"><div class="ss-ti-icon">🔧</div><div class="ss-ti-name cpy">black</div><div class="ss-ti-desc">formatage automatique Python</div></div>
+            <div class="ss-ti"><div class="ss-ti-icon">🔧</div><div class="ss-ti-name cpy">flake8</div><div class="ss-ti-desc">linting PEP8, max-line=88</div></div>
+            <div class="ss-ti"><div class="ss-ti-icon">🔧</div><div class="ss-ti-name cpy">isort</div><div class="ss-ti-desc">tri automatique des imports</div></div>
+            <div class="ss-ti"><div class="ss-ti-icon">🔧</div><div class="ss-ti-name cfg">trailing-whitespace</div><div class="ss-ti-desc">espaces en fin de ligne</div></div>
+            <div class="ss-ti"><div class="ss-ti-icon">🔧</div><div class="ss-ti-name cfg">end-of-file-fixer</div><div class="ss-ti-desc">newline en fin de fichier</div></div>
+            <div class="ss-ti"><div class="ss-ti-icon">🔧</div><div class="ss-ti-name crd">check-merge-conflict</div><div class="ss-ti-desc">bloque si marqueurs &lt;&lt;&lt;&lt;&lt;&lt;</div></div>
+            <div class="ss-ti"><div class="ss-ti-icon">🔧</div><div class="ss-ti-name crd">detect-private-key</div><div class="ss-ti-desc">bloque si clé API commitée</div></div>
+            <div class="ss-ti"><div class="ss-ti-icon">🔧</div><div class="ss-ti-name cnb">nbstripout</div><div class="ss-ti-desc">vide les outputs notebooks avant commit</div></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
 
 </body>
 </html>
